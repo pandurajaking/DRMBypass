@@ -17,11 +17,16 @@ Utility downloads and decrypts DRM protected media content.
 1. Clone repo
 2. Run ```poetry install```
 3. Edit ```.env``` according to your ~~bloatware~~ software location
-4. Run utility
+4. Run ```source .venv/Scripts/activate```
+5. Run utility
 ```
 py main.py --url "https://hosting.com/video/175" --name "file"
 ```
-5. Enjoy proccess
+6. Also you could use proccess multiplexors like parallel
+
+## TODO
+* Multithreading
+* Relevant selector for searching media container not for specific case
 
 ## Note
 Ulitity was tested on Windows 10 x64, Chrome 94.0.4606.81 x64 with widevinecdm.dll from 07 oct 2021.
