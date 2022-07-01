@@ -1,8 +1,8 @@
 import os
-from catch_content import catch_content
-from decrypt import decrypt
-from download import download
-from merge import merge
+
+from parse_page import Driver
+from utils import decrypt, download, merge
+
 
 def cleanup(*paths):
     for path in paths:
@@ -12,14 +12,15 @@ def cleanup(*paths):
         else:
             print(f"File {path} does not exist")
 
-def pipeline(url: str, name: str):
+
+def pipeline(driver: Driver, url: str, name: str, max_speed: int):
     skip_decrypt = False
-    (mpd_url, content_key_dict) = catch_content(url)
+    (mpd_url, content_key_dict) = driver.parse_page(url)
 
     if not content_key_dict:
         skip_decrypt = True
 
-    content_path = download(mpd_url, name)
+    content_path = download(mpd_url, name, max_speed)
 
     if content_path is None:
         return (False, "Failed to get content path")

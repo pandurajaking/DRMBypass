@@ -1,9 +1,9 @@
 import argparse
 from dotenv import load_dotenv
 
+from parse_page import Driver
 from pipeline import pipeline
 from threads import threads
-
 
 load_dotenv()
 
@@ -16,19 +16,31 @@ def main():
     parser.add_argument('--list', type=str, help='set the URLs list path')
     parser.add_argument(
         '--offset', type=int, help='set offset for resulting filenames')
+    parser.add_argument(
+        '--speed', type=int, help='Set download speed limit(KB/s); 0 means no limit')
     args = parser.parse_args()
+
+    driver_obj = Driver()
+    offset = 0
+    max_speed = 0  # no limit
+    filename = "default_name"
+
+    if args.offset is not None:
+        offset = args.offset
+    if args.speed is not None:
+        max_speed = args.speed
+    if args.name is not None:
+        filename = args.name
+
     if args.url is not None:
-        if args.name is not None:
-            pipeline(args.url, args.name)
-        else:
-            pipeline(args.url, "default_name")
-    if args.list is not None:
-        if args.offset is not None:
-            threads(args.list, args.offset)
-        else:
-            threads(args.list, 0)
+        pipeline(driver_obj, args.url, filename, max_speed)
+    elif args.list is not None:
+        threads(driver_obj, args.list, offset, max_speed)
     else:
         parser.print_help()
+
+    driver_obj.driver.close()
+    return 0
 
 
 if __name__ == '__main__':

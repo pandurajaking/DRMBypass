@@ -25,7 +25,7 @@ py main.py --url "https://hosting.com/video/175" --name "file"
 6. Also you could use proccess multiplexors like parallel
 
 ## TODO
-* Multithreading
+* ~~Multithreading~~
 * Relevant selector for searching media container not for specific case
 
 ## Note

@@ -4,6 +4,7 @@ from queue import Queue
 from threading import Thread
 from time import sleep, time
 
+from parse_page import Driver
 from pipeline import pipeline
 
 logging.basicConfig(level=logging.INFO,
@@ -28,16 +29,16 @@ class PipelineWorker(Thread):
     def run(self):
         while True:
             # Get the work from the queue and expand the tuple
-            link, name = self.queue.get()
+            driver, url, name, max_speed = self.queue.get()
             try:
-                pipeline(link, name)
+                pipeline(driver, url, name, max_speed)
             finally:
                 self.queue.task_done()
 
 
-def threads(path: str, offset: int):
+def threads(driver: Driver, path: str, offset: int, max_speed: int):
     ts = time()
-    links = read_file(path)
+    urls = read_file(path)
     queue = Queue()
     # Create 4 worker threads
     num_worker_threads = 4
@@ -48,12 +49,11 @@ def threads(path: str, offset: int):
         worker.start()
     # Put the tasks into the queue as a tuple
     count = 0
-    for link in links:
-        sleep(10)
+    for url in urls:
         count += 1
-        name = count + offset
-        logger.info('Queueing {}'.format(link))
-        queue.put((link, f"{name}_seriya"))
+        name = f"{count + offset}_seriya"
+        logger.info('Queueing {}'.format(url))
+        queue.put((driver, url, name, max_speed/num_worker_threads))
     # Causes the main thread to wait for the queue to finish processing all the tasks
     queue.join()
     logging.info('Took %s', time() - ts)
